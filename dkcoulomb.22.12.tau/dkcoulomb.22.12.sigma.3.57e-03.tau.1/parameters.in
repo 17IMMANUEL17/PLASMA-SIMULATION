@@ -1,0 +1,117 @@
+! Input parameters for cosolver
+
+&PARALLELIZATION
+	! number of MPI task' per collision type
+nprocs_ei = 1
+nprocs_ie = 1
+nprocs_self = 1
+/
+
+&BASIC
+! Size of collisional matrices
+Pmaxi = 22
+Jmaxi= 12
+
+Pmaxe= 22 !32
+Jmaxe= 12 !16
+
+! Improved Sugama sum bounds
+ImpSugamaJmax = 5
+ImpSugamaKmax = 5
+
+DO_SUGAMA_RELATIONS_CHECK = .false.
+DO_SUGAMA_FRICTION_COEFFS_COMPUTATION = .false.
+
+! Upper bounds sums
+JEmaxx= 12 ! energy upper sum
+PMmaxx= 12 ! only for GK Coulomb, a value of 18 is usually sufficient (need to be adjusted to match DK limit)
+
+! FLR indices for GK operators
+! electrons
+neFLR = 2
+neFLRs = 0
+
+! ions
+niFLR = 2
+niFLRs = 0
+
+! error function
+! ERFMAX = 100
+
+! Set a-b collisions  flags
+eecolls= .true.
+iicolls= .false.
+eicolls= .false.
+iecolls= .false.
+
+! cosolver root dir: needed to load coefficient gk Coulomb
+cosolver_dir = '/home/sernst/Codes/cosolver'
+/
+
+
+&BASIS_TRANSFORMATION_PAR
+!T4dir = '/misc/bjfrei/T4/NNT4_L000x200_K000x200_P000x200_J000x200'
+T4dir = './T4'
+idxT4max = 300
+IFT4 = .true.
+/
+
+&MODEL_PAR
+nu=1
+! 5.44625135e-04
+! 3.56511267e-03
+! 2.33372049e-02
+! 1.52765195e-01
+! 1.00000000e+00
+sigmaei = 3.56511267e-03 ! 5.44625134521104866675e-4 ! 2.723311546840959e-04 ! 0.0027  !   me / mi  = 0.05196152422706632^2
+tauie = 1  ! Ti/Te
+kperp = 0  ! normalized perpendicular wavenumber to rho_s = cs/Omega_i
+/
+
+&OPERATOR_MODEL
+! Set the operator model for test and back reaction:
+! see model_mod.f90 routines for options
+! Recommanded (I/E)TEST == (I/E)BACK
+! Electron test and back models
+
+ETEST_coll= 'dkcoulomb'
+EBACK_coll = 'dkcoulomb'
+
+! Ion test and back models
+ITEST_coll= 'dkcoulomb'
+IBACK_coll = 'dkcoulomb'
+
+! Electron-Electron model
+ESELF_coll = 'dkcoulomb'
+
+! Ion-ion model
+ISELF_coll = 'dkcoulomb'
+
+LWL = .false.
+
+DKTEST = .F. ! DK test part
+DKBACK = .F. ! DK back reaction part
+
+ADDTEST = .T.
+ADDBACK= .T.
+
+ADD_IS_TO_OS = .true.
+
+! if 'gkcoulomb', computed in the fly and with gkcoulomb suites
+GKC_USE_FULL = .false.
+
+/
+
+
+&OUTPUT_PAR
+suffix_resfile='.'
+outdir = './out/sigma_scan/dkcoulomb.22.12.sigma.3.57e-03.tau.1' ! relative to where to code is exec
+/
+
+&restart_PAR
+nsave_ei=1
+nsave_ie=1
+nsave_ee=1
+nsave_ii=1
+ifrestart=.false.
+/
